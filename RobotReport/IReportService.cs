@@ -14,9 +14,10 @@ namespace RobotReport
         void ValidateRequestData(RobotReportRequest robotReportRequest);
 
         /// <summary>
-        /// Create and Save report data to the database
+        /// 
         /// </summary>
         /// <param name="robotReportRequest"></param>
-        void CreateAndSaveReportData(RobotReportRequest robotReportRequest);
+        /// <returns>RobotReport</returns>
+        Model.RobotReport CreateAndSaveReportData(RobotReportRequest robotReportRequest);
     }
 }

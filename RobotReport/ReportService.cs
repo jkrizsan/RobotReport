@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace RobotReport
@@ -18,17 +19,23 @@ namespace RobotReport
             _reportContex = reportContex;
         }
 
-        public void CreateAndSaveReportData(RobotReportRequest robotReportRequest)
+        /// <inheritdoc />
+        public Model.RobotReport CreateAndSaveReportData(RobotReportRequest robotReportRequest)
         {
-            _reportContex.Add(new Model.RobotReport()
+            var commands = robotReportRequest.Commands;
+            var report = new Model.RobotReport()
             {
-                Commands=10,
-                Timestamp=DateTime.Now,
-                Duration = 10,
-                Result = 4
-            });
+                Commands = commands.Count,
+                Timestamp = DateTime.Now,
+                Duration = calcDuration(commands),
+                Result = commands.Sum(x => x.Steps) + 1
+            };
 
-            _reportContex.SaveChanges();
+            //_reportContex.Add(report);
+
+            //_reportContex.SaveChanges();
+
+            return report;
         }
 
         /// <inheritdoc />
@@ -41,12 +48,15 @@ namespace RobotReport
 
         private void validateCommands(List<Command> commands)
         {
-          //  throw new NotImplementedException();
+            if (commands.Any(x => x.Steps > 100000) || commands.Count > 100000)
+            {
+                throw new ValidationException("Too much steps within a command or too much command!");
+            }
         }
 
         private void validateStartData(Point start)
         {
-            int minLimit = - 100000;
+            int minLimit = -100000;
             if (start.X < minLimit || start.Y < minLimit)
             {
                 throw new ValidationException("Some start point values is too low!");
@@ -57,6 +67,21 @@ namespace RobotReport
             {
                 throw new ValidationException("Some start point values is too high!");
             }
+        }
+
+        private double calcDuration(List<Command> commands)
+        {
+            double duration = 0;
+            double durationSingleStep = 0.001;
+            double durationOfSwitchBetweenCommands = 0.003;
+
+            foreach (Command command in commands)
+            {
+                duration += durationOfSwitchBetweenCommands;
+                duration += durationSingleStep * command.Steps;
+            }
+
+            return duration;
         }
     }
 }

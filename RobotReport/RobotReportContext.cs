@@ -11,11 +11,6 @@ namespace RobotReport
         public RobotReportContext(DbContextOptions options) : base(options)
         { }
 
-        //public RobotReportContext(DbContextOptions<RobotReportContext> options)
-        //: base(options)
-        //{
-        //}
-
         public DbSet<RobotReport.Model.RobotReport> RobotReports { get; set; }
     }
 }

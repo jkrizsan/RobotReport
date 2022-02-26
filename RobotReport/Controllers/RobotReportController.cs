@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RobotReport.Data;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace RobotReport.Controllers
 {
     [ApiController]
-    [Route("[Controller]")]
+    [Route("tibber-developer-test")]
     public class RobotReportController : Controller
     {
         private readonly IReportService _reportService;
@@ -14,20 +16,26 @@ namespace RobotReport.Controllers
         }
 
         [HttpPost]
-        public string Post([FromBody] RobotReportRequest requestDto)
+        public IActionResult Post([FromBody] RobotReportRequest requestDto)
         {
+            Model.RobotReport robotReport = new Model.RobotReport();
+
             try
             {
                 _reportService.ValidateRequestData(requestDto);
-                _reportService.CreateAndSaveReportData(requestDto);
+                robotReport = _reportService.CreateAndSaveReportData(requestDto);
             }
-            catch (System.Exception ex)
+            catch (ValidationException ex)
+            {
+                return ValidationProblem(ex.Message);
+            }
+            catch (Exception ex)
             {
 
-                throw;
+                return Problem(ex.Message);
             }
 
-            return requestDto.ToString();
+            return Ok(robotReport);
         }
 
     }
