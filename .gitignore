@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/RobotReport/v17
+/.vs
+/RobotReport/bin/Debug/netcoreapp3.1
+/RobotReport/.vs/RobotReport/v17
+/RobotReport/obj
