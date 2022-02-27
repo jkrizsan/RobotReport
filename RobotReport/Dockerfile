@@ -8,9 +8,9 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["RobotReport.csproj", "."]
-RUN dotnet restore "./RobotReport.csproj"
+RUN dotnet restore "RobotReport.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/"
 RUN dotnet build "RobotReport.csproj" -c Release -o /app/build
 
 FROM build AS publish
