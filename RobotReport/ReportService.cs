@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 
 namespace RobotReport
 {
@@ -31,9 +30,9 @@ namespace RobotReport
                 Result = commands.Sum(x => x.Steps) + 1
             };
 
-            //_reportContex.Add(report);
+            _reportContex.Add(report);
 
-            //_reportContex.SaveChanges();
+            _reportContex.SaveChanges();
 
             return report;
         }

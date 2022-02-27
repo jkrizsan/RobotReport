@@ -34,16 +34,12 @@ namespace RobotReport
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-            //services.AddMvc();
-
             services.AddTransient<IReportService, ReportService> ();
 
             var options = new DbContextOptionsBuilder<RobotReportContext>().Options;
             services.AddEntityFrameworkNpgsql().AddDbContext<RobotReportContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("Connection")));
 
-            //services.AddDbContext<RobotReportContext>(options =>
-            //    options.UseNpgsql(Configuration.GetConnectionString("Connection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
