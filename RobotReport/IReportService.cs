@@ -1,7 +1,4 @@
 ﻿using RobotReport.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace RobotReport
 {
@@ -14,10 +11,16 @@ namespace RobotReport
         void ValidateRequestData(RobotReportRequest robotReportRequest);
 
         /// <summary>
-        /// 
+        /// Create Report Data
         /// </summary>
         /// <param name="robotReportRequest"></param>
         /// <returns>RobotReport</returns>
-        Model.RobotReport CreateAndSaveReportData(RobotReportRequest robotReportRequest);
+        Model.RobotReport CreateReportData(RobotReportRequest robotReportRequest);
+
+        /// <summary>
+        /// Save the Report Data to the Database
+        /// </summary>
+        /// <param name="robotReport"></param>
+        void SaveReportDataToDB(Model.RobotReport robotReport);
     }
 }

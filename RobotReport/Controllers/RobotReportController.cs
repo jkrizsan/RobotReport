@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using RobotReport.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +11,13 @@ namespace RobotReport.Controllers
     public class RobotReportController : Controller
     {
         private readonly IReportService _reportService;
-        public RobotReportController(IReportService reportService)
+
+        private readonly ILogger _logger;
+
+        public RobotReportController(IReportService reportService, ILoggerFactory _loggerFactory)
         {
             _reportService = reportService;
+            _logger = _loggerFactory.CreateLogger<RobotReportController>();
         }
 
         [HttpPost]
@@ -23,14 +28,20 @@ namespace RobotReport.Controllers
             try
             {
                 _reportService.ValidateRequestData(requestDto);
-                robotReport = _reportService.CreateAndSaveReportData(requestDto);
+                robotReport = _reportService.CreateReportData(requestDto);
+                _reportService.SaveReportDataToDB(robotReport);
+
+                _logger.LogInformation("The Post request is processed successfully.");
             }
             catch (ValidationException ex)
             {
+                _logger.LogError(ex, "Validation error, message: {message}", ex.Message);
+
                 return ValidationProblem(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error, message: {message}", ex.Message);
 
                 return Problem(ex.Message);
             }

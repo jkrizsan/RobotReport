@@ -8,7 +8,7 @@
         /// <summary>
         /// Direction that the command given
         /// </summary>
-        public Direction Direction { get; set; }
+        public string Direction { get; set; }
 
         /// <summary>
         /// Number of the Steps that have to take to the specified direction

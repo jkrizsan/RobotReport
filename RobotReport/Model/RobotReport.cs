@@ -10,7 +10,6 @@ namespace RobotReport.Model
         /// <summary>
         /// Primary Key
         /// </summary>
-       // [Key]
         public int Id { get; set; }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using RobotReport.Data;
+﻿using Microsoft.Extensions.Logging;
+using RobotReport.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,15 +12,27 @@ namespace RobotReport
     /// </summary>
     public class ReportService : IReportService
     {
-        private RobotReportContext _reportContex;
 
-        public ReportService(RobotReportContext reportContex)
+        private readonly RobotReportContext _reportContex;
+
+        private readonly Settings _settings;
+
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="reportContex"></param>
+        /// <param name="settings"></param>
+        public ReportService(RobotReportContext reportContex, Settings settings, ILoggerFactory loggerFactory)
         {
+            _settings = settings;
             _reportContex = reportContex;
+            _logger = loggerFactory.CreateLogger<ReportService>();
         }
 
         /// <inheritdoc />
-        public Model.RobotReport CreateAndSaveReportData(RobotReportRequest robotReportRequest)
+        public Model.RobotReport CreateReportData(RobotReportRequest robotReportRequest)
         {
             var commands = robotReportRequest.Commands;
             var report = new Model.RobotReport()
@@ -30,41 +43,71 @@ namespace RobotReport
                 Result = commands.Sum(x => x.Steps) + 1
             };
 
-            _reportContex.Add(report);
-
-            _reportContex.SaveChanges();
+            _logger.LogInformation("Report data is created");
 
             return report;
+        }
+
+        public void SaveReportDataToDB(Model.RobotReport robotReport)
+        {
+            try
+            {
+                _reportContex.Add(robotReport);
+
+                _reportContex.SaveChanges();
+
+                _logger.LogInformation("Report data is saved to the Database");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while save report data, message: {message}", ex.Message);
+                
+                throw new Exception("Error happened while tried to save report data to the Database");
+            }
         }
 
         /// <inheritdoc />
         public void ValidateRequestData(RobotReportRequest robotReportRequest)
         {
-
             validateStartData(robotReportRequest.Start);
             validateCommands(robotReportRequest.Commands);
+            _logger.LogInformation("Report data is validated");
         }
 
         private void validateCommands(List<Command> commands)
         {
-            if (commands.Any(x => x.Steps > 100000) || commands.Count > 100000)
+            if (commands.Count > _settings.MaxStepOrCommandLimit)
             {
-                throw new ValidationException("Too much steps within a command or too much command!");
+                throw new ValidationException($"The amount of commands exceed the maximum limits ({_settings.MaxStepOrCommandLimit})!");
+            }
+
+            for (int i = 0; i< commands.Count; i++)
+            {
+                var command = commands[i];
+
+                if (command.Steps > _settings.MaxStepOrCommandLimit)
+                {
+                    throw new ValidationException($"At the { i + 1 }. command, the amount of steps exceed the maximum limits ({_settings.MaxStepOrCommandLimit})!");
+                }
+                
+                if(Enum.TryParse(typeof(Direction), command.Direction, true, out object result) == false)
+                {
+                    throw new ValidationException($"At the {i + 1}. command, the '{command.Direction}' value is not supported as a Direction!");
+                }    
+
             }
         }
 
         private void validateStartData(Point start)
         {
-            int minLimit = -100000;
-            if (start.X < minLimit || start.Y < minLimit)
+            if (start.X < _settings.MinLimitOfPoints || start.Y < _settings.MinLimitOfPoints)
             {
-                throw new ValidationException("Some start point values is too low!");
+                throw new ValidationException($"The start point values is exceed the minimum limits ({_settings.MinLimitOfPoints})!");
             }
 
-            int maxLimit = 100000;
-            if (start.X > maxLimit || start.Y > maxLimit)
+            if (start.X > _settings.MaxLimitOfPoints || start.Y > _settings.MaxLimitOfPoints)
             {
-                throw new ValidationException("Some start point values is too high!");
+                throw new ValidationException($"The start point values is exceed the maximum limits ({_settings.MaxLimitOfPoints})!");
             }
         }
 
