@@ -1,3 +1,6 @@
+using RobotReport.Data;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,9 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using RobotReport.Data;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using RobotReport.Mappers;
 
 namespace RobotReport
 {
@@ -35,10 +36,10 @@ namespace RobotReport
 
             services.AddTransient<IReportService, ReportService> ();
 
-            var options = new DbContextOptionsBuilder<RobotReportContext>().Options;
-            services.AddEntityFrameworkNpgsql().AddDbContext<RobotReportContext>(opt =>
+            services.AddDbContext<RobotReportContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("Connection")));
 
+            services.AddAutoMapper(typeof(RobotReportProfile));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

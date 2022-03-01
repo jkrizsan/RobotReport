@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using System;
 using RobotReport.Data;
-using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 
 namespace RobotReport.Controllers
@@ -23,13 +23,17 @@ namespace RobotReport.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] RobotReportRequest requestDto)
         {
-            Model.RobotReport robotReport = new Model.RobotReport();
+            RobotReportResponse response = new RobotReportResponse();
 
             try
             {
                 _reportService.ValidateRequestData(requestDto);
-                robotReport = _reportService.CreateReportData(requestDto);
+
+                var robotReport = _reportService.CreateReportData(requestDto);
+
                 _reportService.SaveReportDataToDB(robotReport);
+
+                response = _reportService.MapReportToResponse(robotReport);
 
                 _logger.LogInformation("The Post request is processed successfully.");
             }
@@ -46,8 +50,7 @@ namespace RobotReport.Controllers
                 return Problem(ex.Message);
             }
 
-            return Ok(robotReport);
+            return Ok(response);
         }
-
     }
 }

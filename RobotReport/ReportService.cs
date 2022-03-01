@@ -1,14 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Linq;
 using RobotReport.Data;
-using System;
+using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace RobotReport
 {
     /// <summary>
-    /// Report Service
+    /// Report Service class
     /// </summary>
     public class ReportService : IReportService
     {
@@ -19,16 +20,22 @@ namespace RobotReport
 
         private readonly ILogger _logger;
 
+        private readonly IMapper _mapper;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="reportContex"></param>
         /// <param name="settings"></param>
-        public ReportService(RobotReportContext reportContex, Settings settings, ILoggerFactory loggerFactory)
+        public ReportService(RobotReportContext reportContex,
+            Settings settings,
+            ILoggerFactory loggerFactory,
+            IMapper mapper)
         {
             _settings = settings;
             _reportContex = reportContex;
             _logger = loggerFactory.CreateLogger<ReportService>();
+            _mapper = mapper;
         }
 
         /// <inheritdoc />
@@ -70,10 +77,16 @@ namespace RobotReport
         public void ValidateRequestData(RobotReportRequest robotReportRequest)
         {
             validateStartData(robotReportRequest.Start);
+
             validateCommands(robotReportRequest.Commands);
+
             _logger.LogInformation("Report data is validated");
         }
 
+        /// <inheritdoc />
+        public RobotReportResponse MapReportToResponse(Model.RobotReport robotReport)
+            => _mapper.Map<RobotReportResponse>(robotReport);
+        
         private void validateCommands(List<Command> commands)
         {
             if (commands.Count > _settings.MaxStepOrCommandLimit)
@@ -87,14 +100,13 @@ namespace RobotReport
 
                 if (command.Steps > _settings.MaxStepOrCommandLimit)
                 {
-                    throw new ValidationException($"At the { i + 1 }. command, the amount of steps exceed the maximum limits ({_settings.MaxStepOrCommandLimit})!");
+                    throw new ValidationException($"At the {i + 1}. command, the amount of steps exceed the maximum limits ({_settings.MaxStepOrCommandLimit})!");
                 }
                 
                 if(Enum.TryParse(typeof(Direction), command.Direction, true, out object result) == false)
                 {
                     throw new ValidationException($"At the {i + 1}. command, the '{command.Direction}' value is not supported as a Direction!");
                 }    
-
             }
         }
 

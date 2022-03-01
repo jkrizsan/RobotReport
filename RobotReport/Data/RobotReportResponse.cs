@@ -1,21 +1,21 @@
 ﻿using System;
-          
-namespace RobotReport.Model
+
+namespace RobotReport.Data
 {
     /// <summary>
-    /// Robot Report Model class
+    /// Dto class for Robot Report response
     /// </summary>
-    public class RobotReport
+    public class RobotReportResponse
     {
         /// <summary>
-        /// Primary Key
+        /// Database Id
         /// </summary>
-        public int Id { get; set; }
+        public int DatabaseId { get; set; }
 
         /// <summary>
         /// Timestamp
         /// </summary>
-        public DateTime Timestamp  { get; set; }
+        public DateTime Timestamp { get; set; }
 
         /// <summary>
         /// Number of the commands
@@ -23,7 +23,7 @@ namespace RobotReport.Model
         public int Commands { get; set; }
 
         /// <summary>
-        /// Number of Unique Cleaned Places
+        /// Number of Unique Cleaned Places,
         /// </summary>
         public int Result { get; set; }
 

@@ -1,13 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RobotReport
 {
@@ -19,8 +13,10 @@ namespace RobotReport
 
             using (var scope = host.Services.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<RobotReportContext>();
-                db.Database.Migrate(); // apply the migrations
+                var db = scope.ServiceProvider
+                    .GetRequiredService<RobotReportContext>();
+
+                db.Database.Migrate();
             }
 
             host.Run();

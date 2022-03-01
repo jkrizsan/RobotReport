@@ -24,6 +24,5 @@ namespace RobotReport.Data
         /// Collection of the commands
         /// </summary>
         public List<Command> Commands { get; set; }
-
     }
 }

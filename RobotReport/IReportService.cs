@@ -2,6 +2,9 @@
 
 namespace RobotReport
 {
+    /// <summary>
+    /// Report Service Interface
+    /// </summary>
     public interface IReportService
     {
         /// <summary>
@@ -22,5 +25,12 @@ namespace RobotReport
         /// </summary>
         /// <param name="robotReport"></param>
         void SaveReportDataToDB(Model.RobotReport robotReport);
+
+        /// <summary>
+        /// Mapping RobotReport data to the response data format
+        /// </summary>
+        /// <param name="robotReport"></param>
+        /// <returns>RobotReportResponse</returns>
+        RobotReportResponse MapReportToResponse(Model.RobotReport robotReport);
     }
 }

@@ -1,8 +1,4 @@
-﻿using RobotReport.Model;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace RobotReport
 {
@@ -11,6 +7,6 @@ namespace RobotReport
         public RobotReportContext(DbContextOptions options) : base(options)
         { }
 
-        public DbSet<RobotReport.Model.RobotReport> RobotReports { get; set; }
+        public DbSet<Model.RobotReport> RobotReports { get; set; }
     }
 }
