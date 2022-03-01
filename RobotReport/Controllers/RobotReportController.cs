@@ -3,6 +3,8 @@ using RobotReport.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using RobotReport.Services;
+using RobotReport.Exceptions;
 
 namespace RobotReport.Controllers
 {
@@ -43,11 +45,17 @@ namespace RobotReport.Controllers
 
                 return ValidationProblem(ex.Message);
             }
-            catch (Exception ex)
+            catch(SavedatabaseException ex)
             {
                 _logger.LogError(ex, "Error, message: {message}", ex.Message);
 
                 return Problem(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error, message: {message}", ex.Message);
+
+                return Problem("Unexpected error happened, please try it later!");
             }
 
             return Ok(response);

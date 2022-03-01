@@ -5,15 +5,15 @@ using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using RobotReport.Exceptions;
 
-namespace RobotReport
+namespace RobotReport.Services
 {
     /// <summary>
     /// Report Service class
     /// </summary>
     public class ReportService : IReportService
     {
-
         private readonly RobotReportContext _reportContex;
 
         private readonly Settings _settings;
@@ -69,7 +69,7 @@ namespace RobotReport
             {
                 _logger.LogError(ex, "Error while save report data, message: {message}", ex.Message);
                 
-                throw new Exception("Error happened while tried to save report data to the Database");
+                throw new SavedatabaseException("Error happened while tried to save report data to the Database");
             }
         }
 

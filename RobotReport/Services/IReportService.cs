@@ -1,6 +1,6 @@
 ﻿using RobotReport.Data;
 
-namespace RobotReport
+namespace RobotReport.Services
 {
     /// <summary>
     /// Report Service Interface
